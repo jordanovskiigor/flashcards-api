@@ -1,6 +1,6 @@
 # flashcard-api
 
-Minimal Flashcard API built with Express and Mongoose.
+Flashcard API built with Express and Mongoose.
 
 ## Quick start
 
