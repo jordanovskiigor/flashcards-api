@@ -47,4 +47,50 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// Add a card to a set
+router.post('/:id/cards', async (req, res) => {
+  try {
+    const { front, back } = req.body;
+    if (!front || !back) return res.status(400).json({ error: 'Card front and back are required' });
+    const set = await FlashcardSet.findById(req.params.id);
+    if (!set) return res.status(404).json({ error: 'Set not found' });
+    set.cards.push({ front, back });
+    await set.save();
+    res.status(201).json(set);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to add card' });
+  }
+});
+
+// Update a card in a set
+router.put('/:id/cards/:cardId', async (req, res) => {
+  try {
+    const set = await FlashcardSet.findById(req.params.id);
+    if (!set) return res.status(404).json({ error: 'Set not found' });
+    const card = set.cards.id(req.params.cardId);
+    if (!card) return res.status(404).json({ error: 'Card not found' });
+    card.front = req.body.front ?? card.front;
+    card.back = req.body.back ?? card.back;
+    await set.save();
+    res.json(set);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update card' });
+  }
+});
+
+// Delete a card from a set
+router.delete('/:id/cards/:cardId', async (req, res) => {
+  try {
+    const set = await FlashcardSet.findById(req.params.id);
+    if (!set) return res.status(404).json({ error: 'Set not found' });
+    const card = set.cards.id(req.params.cardId);
+    if (!card) return res.status(404).json({ error: 'Card not found' });
+    card.remove();
+    await set.save();
+    res.json(set);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete card' });
+  }
+});
+
 module.exports = router;
