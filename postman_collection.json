@@ -1,0 +1,102 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef0123456789",
+    "name": "Flashcard API - Local",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Set",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Test Set\",\n  \"description\": \"used for Postman test\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/api/sets", "host": ["{{baseUrl}}"], "path": ["api","sets"] }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const json = pm.response.json();",
+              "if (pm.response.code === 201 && json._id) pm.environment.set('setId', json._id);",
+              "pm.test('status is 201', () => pm.expect(pm.response.code).to.equal(201));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Add Card",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"front\": \"hello\",\n  \"back\": \"hola\"\n}" },
+        "url": { "raw": "{{baseUrl}}/api/sets/{{setId}}/cards", "host": ["{{baseUrl}}"], "path": ["api","sets","{{setId}}","cards"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const json = pm.response.json();",
+              "if (pm.response.code === 201 && json.cards && json.cards.length) {",
+              "  const last = json.cards[json.cards.length - 1];",
+              "  if (last && last._id) pm.environment.set('cardId', last._id);",
+              "}",
+              "pm.test('status is 201', () => pm.expect(pm.response.code).to.equal(201));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update Card",
+      "request": {
+        "method": "PUT",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"back\": \"hola!\"\n}" },
+        "url": { "raw": "{{baseUrl}}/api/sets/{{setId}}/cards/{{cardId}}", "host": ["{{baseUrl}}"], "path": ["api","sets","{{setId}}","cards","{{cardId}}"] }
+      },
+      "event": [
+        { "listen": "test", "script": { "exec": [ "pm.test('status is 200', () => pm.expect(pm.response.code).to.equal(200));" ] } }
+      ]
+    },
+    {
+      "name": "Delete Card",
+      "request": {
+        "method": "DELETE",
+        "url": { "raw": "{{baseUrl}}/api/sets/{{setId}}/cards/{{cardId}}", "host": ["{{baseUrl}}"], "path": ["api","sets","{{setId}}","cards","{{cardId}}"] }
+      },
+      "event": [
+        { "listen": "test", "script": { "exec": [ "pm.test('status is 200', () => pm.expect(pm.response.code).to.equal(200));" ] } }
+      ]
+    },
+    {
+      "name": "Get Set",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/api/sets/{{setId}}", "host": ["{{baseUrl}}"], "path": ["api","sets","{{setId}}"] }
+      },
+      "event": [
+        { "listen": "test", "script": { "exec": [ "pm.test('status is 200', () => pm.expect(pm.response.code).to.equal(200));" ] } }
+      ]
+    },
+    {
+      "name": "List Sets",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/api/sets", "host": ["{{baseUrl}}"], "path": ["api","sets"] }
+      },
+      "event": [
+        { "listen": "test", "script": { "exec": [ "pm.test('status is 200', () => pm.expect(pm.response.code).to.equal(200));" ] } }
+      ]
+    }
+  ]
+}
