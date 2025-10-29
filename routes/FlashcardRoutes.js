@@ -83,12 +83,14 @@ router.delete('/:id/cards/:cardId', async (req, res) => {
   try {
     const set = await FlashcardSet.findById(req.params.id);
     if (!set) return res.status(404).json({ error: 'Set not found' });
-    const card = set.cards.id(req.params.cardId);
-    if (!card) return res.status(404).json({ error: 'Card not found' });
-    card.remove();
+    const cardId = req.params.cardId;
+    const before = set.cards.length;
+    set.cards = set.cards.filter(c => String(c._id) !== String(cardId));
+    if (set.cards.length === before) return res.status(404).json({ error: 'Card not found' });
     await set.save();
     res.json(set);
   } catch (err) {
+    console.error('Delete card error:', err);
     res.status(500).json({ error: 'Failed to delete card' });
   }
 });
