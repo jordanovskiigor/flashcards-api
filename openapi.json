@@ -1,0 +1,30 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Flashcard API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/sets": {
+      "get": {
+        "summary": "List all sets",
+        "responses": { "200": { "description": "A list of sets" } }
+      },
+      "post": {
+        "summary": "Create a set",
+        "requestBody": { "required": true },
+        "responses": { "201": { "description": "Set created" } }
+      }
+    },
+    "/api/sets/{id}": {
+      "get": { "summary": "Get a set by id", "responses": { "200": { "description": "Set" } } }
+    },
+    "/api/sets/{id}/cards": {
+      "post": { "summary": "Add a card to a set", "responses": { "201": { "description": "Card added" } } }
+    },
+    "/api/sets/{id}/cards/{cardId}": {
+      "put": { "summary": "Update a card", "responses": { "200": { "description": "Card updated" } } },
+      "delete": { "summary": "Delete a card", "responses": { "200": { "description": "Card deleted" } } }
+    }
+  }
+}

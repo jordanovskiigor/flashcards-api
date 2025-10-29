@@ -4,6 +4,8 @@ const cors = require('cors');
 require('dotenv').config();
 
 const flashcardRoutes = require('./routes/FlashcardRoutes.js');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./openapi.json');
 
 const app = express();
 app.use(express.json());
@@ -14,6 +16,10 @@ app.use('/api/sets', flashcardRoutes);
 
 // Health route
 app.get('/', (req, res) => res.json({ status: 'ok', service: 'flashcard-api' }));
+
+// Swagger UI
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.get('/openapi.json', (req, res) => res.json(swaggerDocument));
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
